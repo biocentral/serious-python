@@ -33,7 +33,8 @@ abstract class SeriousPythonPlatform extends PlatformInterface {
       {String? script,
       List<String>? modulePaths,
       Map<String, String>? environmentVariables,
-      bool? sync}) {
+      bool? sync,
+      int? stackSize}) {
     throw UnimplementedError('run() has not been implemented.');
   }
 

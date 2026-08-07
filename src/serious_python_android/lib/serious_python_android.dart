@@ -32,7 +32,8 @@ class SeriousPythonAndroid extends SeriousPythonPlatform {
       {String? script,
       List<String>? modulePaths,
       Map<String, String>? environmentVariables,
-      bool? sync}) async {
+      bool? sync,
+      int? stackSize}) async {
     Future setenv(String key, String value) async {
       await methodChannel.invokeMethod<String>(
           'setEnvironmentVariable', {'name': key, 'value': value});

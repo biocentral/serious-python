@@ -26,7 +26,8 @@ class SeriousPythonLinux extends SeriousPythonPlatform {
       {String? script,
       List<String>? modulePaths,
       Map<String, String>? environmentVariables,
-      bool? sync}) async {
+      bool? sync,
+      int? stackSize}) async {
     final Map<String, dynamic> arguments = {
       'exePath': Platform.resolvedExecutable,
       'appPath': appPath,
