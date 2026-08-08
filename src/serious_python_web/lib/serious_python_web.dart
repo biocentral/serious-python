@@ -22,7 +22,11 @@ class SeriousPythonWeb extends SeriousPythonPlatform {
 
   @override
   Future<String?> run(String appPath,
-      {String? script, List<String>? modulePaths, Map<String, String>? environmentVariables, bool? sync}) async {
+      {String? script,
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     try {
       final pyodide = await _pyodideStateManager.getPyodide(modulePaths ?? []);
 
@@ -30,10 +34,11 @@ class SeriousPythonWeb extends SeriousPythonPlatform {
       final pythonCode = await rootBundle.loadString(appPath);
 
       // Set environment variables if provided
-      await PyodideUtils.setupEnvironmentVariables(pyodide, environmentVariables);
+      await PyodideUtils.setupEnvironmentVariables(
+          pyodide, environmentVariables);
 
       // Print debug code in debug mode
-      if(kDebugMode) {
+      if (kDebugMode) {
         await PyodideUtils.printPythonDebug(pyodide);
       }
 

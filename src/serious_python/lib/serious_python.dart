@@ -41,18 +41,17 @@ class SeriousPython {
   /// defaults to 8 MB. Ignored on other platforms.
   static Future<String?> run(String assetPath,
       {String? appFileName,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync,
-        int? stackSize}) async {
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     // Handle web platform differently
     if (kIsWeb) {
       return _runWeb(assetPath,
           appFileName: appFileName,
           modulePaths: modulePaths,
           environmentVariables: environmentVariables,
-          sync: sync,
-          stackSize: stackSize);
+          sync: sync);
     } else {
       return _runDesktop(assetPath,
           appFileName: appFileName,
@@ -66,11 +65,9 @@ class SeriousPython {
   /// Web-specific implementation
   static Future<String?> _runWeb(String assetPath,
       {String? appFileName,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync,
-        int? stackSize}) async {
-
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync}) async {
     String virtualPath;
     if (path.extension(assetPath) == ".zip") {
       virtualPath = assetPath.replaceAll(".zip", "");
@@ -88,17 +85,16 @@ class SeriousPython {
     return runProgram(virtualPath,
         modulePaths: modulePaths,
         environmentVariables: environmentVariables,
-        sync: sync,
-        stackSize: stackSize);
+        sync: sync);
   }
 
   /// Desktop-specific implementation
   static Future<String?> _runDesktop(String assetPath,
       {String? appFileName,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync,
-        int? stackSize}) async {
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     String appPath = "";
     if (path.extension(assetPath) == ".zip") {
       appPath = await extractAssetZip(assetPath);
@@ -144,10 +140,10 @@ class SeriousPython {
   /// defaults to 8 MB. Ignored on other platforms.
   static Future<String?> runProgram(String appPath,
       {String? script,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync,
-        int? stackSize}) async {
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     return SeriousPythonPlatform.instance.run(appPath,
         script: script,
         modulePaths: modulePaths,
