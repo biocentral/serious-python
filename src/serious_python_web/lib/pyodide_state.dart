@@ -6,26 +6,24 @@ import 'package:serious_python_web/pyodide_constants.dart';
 import 'package:serious_python_web/pyodide_interop.dart';
 import 'package:serious_python_web/pyodide_utils.dart';
 
-
 class PyodideStateManager {
   PyodideStateInitialize? _initState;
   PyodideStateLoadDependencies? _depState;
   PyodideStateLoadModuleCode? _moduleState;
 
   Future<PyodideInterface> getPyodide(List<String> modulePaths) async {
-    if(_initState == null) {
+    if (_initState == null) {
       _initState = await PyodideStateInitialize().doSetup();
     }
-    if(_depState == null) {
+    if (_depState == null) {
       _depState = await PyodideStateLoadDependencies(_initState!._pyodide!).doSetup();
     }
-    if(_moduleState == null) {
+    if (_moduleState == null) {
       _moduleState = await PyodideStateLoadModuleCode(_depState!._pyodide);
     }
     _moduleState = await _moduleState!.doSetup(modulePaths);
     return _moduleState!._pyodide;
   }
-
 }
 
 class PyodideStateInitialize {
@@ -194,7 +192,7 @@ if '/package' not in sys.path:
     try {
       await _loadModuleDirectories(modulePaths);
       return this;
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }

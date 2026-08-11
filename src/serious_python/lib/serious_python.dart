@@ -48,10 +48,7 @@ class SeriousPython {
     // Handle web platform differently
     if (kIsWeb) {
       return _runWeb(assetPath,
-          appFileName: appFileName,
-          modulePaths: modulePaths,
-          environmentVariables: environmentVariables,
-          sync: sync);
+          appFileName: appFileName, modulePaths: modulePaths, environmentVariables: environmentVariables, sync: sync);
     } else {
       return _runDesktop(assetPath,
           appFileName: appFileName,
@@ -64,10 +61,7 @@ class SeriousPython {
 
   /// Web-specific implementation
   static Future<String?> _runWeb(String assetPath,
-      {String? appFileName,
-      List<String>? modulePaths,
-      Map<String, String>? environmentVariables,
-      bool? sync}) async {
+      {String? appFileName, List<String>? modulePaths, Map<String, String>? environmentVariables, bool? sync}) async {
     String virtualPath;
     if (path.extension(assetPath) == ".zip") {
       virtualPath = assetPath.replaceAll(".zip", "");
@@ -82,10 +76,7 @@ class SeriousPython {
       virtualPath = '$virtualPath/main.py';
     }
 
-    return runProgram(virtualPath,
-        modulePaths: modulePaths,
-        environmentVariables: environmentVariables,
-        sync: sync);
+    return runProgram(virtualPath, modulePaths: modulePaths, environmentVariables: environmentVariables, sync: sync);
   }
 
   /// Desktop-specific implementation

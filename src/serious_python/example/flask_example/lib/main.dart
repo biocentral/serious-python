@@ -101,14 +101,9 @@ class _MyAppState extends State<MyApp> {
                                 _result = null;
                               });
                               http
-                                  .post(
-                                      Uri.parse(
-                                          "http://127.0.0.1:55001/python"),
-                                      headers: {
-                                        'Content-Type': 'application/json'
-                                      },
-                                      body: json.encode(
-                                          {"command": _controller.text}))
+                                  .post(Uri.parse("http://127.0.0.1:55001/python"),
+                                      headers: {'Content-Type': 'application/json'},
+                                      body: json.encode({"command": _controller.text}))
                                   .then((resp) => setState(() {
                                         _controller.text = "";
                                         _result = resp.body;

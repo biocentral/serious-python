@@ -34,8 +34,7 @@ class SeriousPythonWeb extends SeriousPythonPlatform {
       final pythonCode = await rootBundle.loadString(appPath);
 
       // Set environment variables if provided
-      await PyodideUtils.setupEnvironmentVariables(
-          pyodide, environmentVariables);
+      await PyodideUtils.setupEnvironmentVariables(pyodide, environmentVariables);
 
       // Print debug code in debug mode
       if (kDebugMode) {

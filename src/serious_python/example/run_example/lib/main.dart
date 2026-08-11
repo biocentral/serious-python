@@ -31,18 +31,13 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String? pyResult;
 
-    Directory tempDir =
-        await (await getTemporaryDirectory()).createTemp("run_example");
+    Directory tempDir = await (await getTemporaryDirectory()).createTemp("run_example");
 
     String resultFileName = p.join(tempDir.path, "out.txt");
     String resultValue = getRandomString(20);
 
     await SeriousPython.run("app/app.zip",
-            environmentVariables: {
-              "RESULT_FILENAME": resultFileName,
-              "RESULT_VALUE": resultValue
-            },
-            sync: false)
+            environmentVariables: {"RESULT_FILENAME": resultFileName, "RESULT_VALUE": resultValue}, sync: false)
         .then((result) => pyResult = result);
 
     // try reading out.txt in a loop

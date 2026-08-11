@@ -22,8 +22,7 @@ class SeriousPythonAndroid extends SeriousPythonPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 
@@ -35,22 +34,19 @@ class SeriousPythonAndroid extends SeriousPythonPlatform {
       bool? sync,
       int? stackSize}) async {
     Future setenv(String key, String value) async {
-      await methodChannel.invokeMethod<String>(
-          'setEnvironmentVariable', {'name': key, 'value': value});
+      await methodChannel.invokeMethod<String>('setEnvironmentVariable', {'name': key, 'value': value});
     }
 
     // load libpyjni.so to get JNI reference
     try {
-      await methodChannel
-          .invokeMethod<String>('loadLibrary', {'libname': 'pyjni'});
+      await methodChannel.invokeMethod<String>('loadLibrary', {'libname': 'pyjni'});
       await setenv("FLET_JNI_READY", "1");
     } catch (e) {
       debugPrint("Warning: Unable to load libpyjni.so library: $e");
     }
 
     // unpack python bundle
-    final nativeLibraryDir =
-        await methodChannel.invokeMethod<String>('getNativeLibraryDir');
+    final nativeLibraryDir = await methodChannel.invokeMethod<String>('getNativeLibraryDir');
     debugPrint("getNativeLibraryDir: $nativeLibraryDir");
 
     var bundlePath = "$nativeLibraryDir/libpythonbundle.so";
@@ -59,22 +55,15 @@ class SeriousPythonAndroid extends SeriousPythonPlatform {
     if (!await File(bundlePath).exists()) {
       throw Exception("Python bundle not found: $bundlePath");
     }
-    var pythonLibPath =
-        await extractFileZip(bundlePath, targetPath: "python_bundle");
+    var pythonLibPath = await extractFileZip(bundlePath, targetPath: "python_bundle");
     debugPrint("pythonLibPath: $pythonLibPath");
 
     var programDirPath = p.dirname(appPath);
 
-    var moduleSearchPaths = [
-      programDirPath,
-      ...?modulePaths,
-      "$pythonLibPath/modules",
-      "$pythonLibPath/stdlib"
-    ];
+    var moduleSearchPaths = [programDirPath, ...?modulePaths, "$pythonLibPath/modules", "$pythonLibPath/stdlib"];
 
     if (await File(sitePackagesZipPath).exists()) {
-      var sitePackagesPath = await extractFileZip(sitePackagesZipPath,
-          targetPath: "python_site_packages");
+      var sitePackagesPath = await extractFileZip(sitePackagesZipPath, targetPath: "python_site_packages");
       debugPrint("sitePackagesPath: $sitePackagesPath");
       moduleSearchPaths.add(sitePackagesPath);
     }
@@ -94,7 +83,6 @@ class SeriousPythonAndroid extends SeriousPythonPlatform {
       }
     }
 
-    return runPythonProgramFFI(
-        sync ?? false, "libpython3.12.so", appPath, script ?? "");
+    return runPythonProgramFFI(sync ?? false, "libpython3.12.so", appPath, script ?? "");
   }
 }

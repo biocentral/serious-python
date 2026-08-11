@@ -3,8 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-Future<void> mergeMacOsSitePackages(String arm64Path, String x86_64Path,
-    String targetPath, bool verbose) async {
+Future<void> mergeMacOsSitePackages(String arm64Path, String x86_64Path, String targetPath, bool verbose) async {
   final arm64Dir = Directory(arm64Path);
   final x86_64Dir = Directory(x86_64Path);
   final targetDir = Directory(targetPath);
@@ -40,8 +39,7 @@ Future<void> mergeMacOsSitePackages(String arm64Path, String x86_64Path,
   stdout.writeln('Merging completed successfully.');
 }
 
-Future<void> mergeDirs(Directory arm64Dir, Directory x86_64Dir,
-    Directory targetDir, bool verbose) async {
+Future<void> mergeDirs(Directory arm64Dir, Directory x86_64Dir, Directory targetDir, bool verbose) async {
   // Create the destination directory if it doesn't exist
   if (!await targetDir.exists()) {
     await targetDir.create(recursive: true);
@@ -49,10 +47,8 @@ Future<void> mergeDirs(Directory arm64Dir, Directory x86_64Dir,
 
   // Iterate over the items in the arm64 directory
   await for (var item in arm64Dir.list(recursive: true)) {
-    final x8664Itempath = path.join(
-        x86_64Dir.path, path.relative(item.path, from: arm64Dir.path));
-    final targetItemPath = path.join(
-        targetDir.path, path.relative(item.path, from: arm64Dir.path));
+    final x8664Itempath = path.join(x86_64Dir.path, path.relative(item.path, from: arm64Dir.path));
+    final targetItemPath = path.join(targetDir.path, path.relative(item.path, from: arm64Dir.path));
 
     if (item is File) {
       if (!await File(targetItemPath).parent.exists()) {
@@ -61,14 +57,12 @@ Future<void> mergeDirs(Directory arm64Dir, Directory x86_64Dir,
       if (item.path.endsWith('.so')) {
         if (await isUniversalBinary(item.path)) {
           if (verbose) {
-            stdout.writeln(
-                '${item.path} is already a universal binary. Copying...');
+            stdout.writeln('${item.path} is already a universal binary. Copying...');
           }
           await item.copy(targetItemPath);
         } else if (await isUniversalBinary(x8664Itempath)) {
           if (verbose) {
-            stdout.writeln(
-                '${item.path} is already a universal binary. Copying...');
+            stdout.writeln('${item.path} is already a universal binary. Copying...');
           }
           await File(x8664Itempath).copy(targetItemPath);
         } else {
@@ -110,8 +104,6 @@ Future<bool> isUniversalBinary(String filePath) async {
   return result.stdout.contains('arm64') && result.stdout.contains('x86_64');
 }
 
-Future<void> lipo(
-    String arm64Path, String x86_64Path, String outputPath) async {
-  await Process.run(
-      'lipo', ['-create', '-output', outputPath, arm64Path, x86_64Path]);
+Future<void> lipo(String arm64Path, String x86_64Path, String outputPath) async {
+  await Process.run('lipo', ['-create', '-output', outputPath, arm64Path, x86_64Path]);
 }

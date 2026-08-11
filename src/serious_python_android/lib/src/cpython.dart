@@ -16,18 +16,16 @@ CPython getCPython(String dynamicLibPath) {
   return _cpython ??= _cpython = CPython(DynamicLibrary.open(dynamicLibPath));
 }
 
-Future<String> runPythonProgramFFI(bool sync, String dynamicLibPath,
-    String pythonProgramPath, String script) async {
+Future<String> runPythonProgramFFI(bool sync, String dynamicLibPath, String pythonProgramPath, String script) async {
   final receivePort = ReceivePort();
   if (sync) {
     // sync run
-    return await runPythonProgramInIsolate(
-        [receivePort.sendPort, dynamicLibPath, pythonProgramPath, script]);
+    return await runPythonProgramInIsolate([receivePort.sendPort, dynamicLibPath, pythonProgramPath, script]);
   } else {
     var completer = Completer<String>();
     // async run
-    final isolate = await Isolate.spawn(runPythonProgramInIsolate,
-        [receivePort.sendPort, dynamicLibPath, pythonProgramPath, script]);
+    final isolate = await Isolate.spawn(
+        runPythonProgramInIsolate, [receivePort.sendPort, dynamicLibPath, pythonProgramPath, script]);
     receivePort.listen((message) {
       receivePort.close();
       isolate.kill();
@@ -89,16 +87,14 @@ String getPythonError(CPython cpython) {
 
   // use 'traceback' module to format exception
   final tracebackModuleNamePtr = "traceback".toNativeUtf8();
-  var tracebackModulePtr =
-      cpython.PyImport_ImportModule(tracebackModuleNamePtr.cast<Char>());
+  var tracebackModulePtr = cpython.PyImport_ImportModule(tracebackModuleNamePtr.cast<Char>());
   cpython.Py_DecRef(tracebackModuleNamePtr.cast());
 
   if (tracebackModulePtr != nullptr) {
     //debugPrint("Traceback module loaded");
 
     final formatFuncName = "format_exception".toNativeUtf8();
-    final pFormatFunc = cpython.PyObject_GetAttrString(
-        tracebackModulePtr, formatFuncName.cast());
+    final pFormatFunc = cpython.PyObject_GetAttrString(tracebackModulePtr, formatFuncName.cast());
     cpython.Py_DecRef(tracebackModuleNamePtr.cast());
 
     if (pFormatFunc != nullptr && cpython.PyCallable_Check(pFormatFunc) != 0) {
@@ -115,8 +111,7 @@ String getPythonError(CPython cpython) {
       for (var i = 0; i < listSize; i++) {
         var itemObj = cpython.PyList_GetItem(listPtr, i);
         var itemObjStr = cpython.PyObject_Str(itemObj);
-        var s =
-            cpython.PyUnicode_AsUTF8(itemObjStr).cast<Utf8>().toDartString();
+        var s = cpython.PyUnicode_AsUTF8(itemObjStr).cast<Utf8>().toDartString();
         exLines.add(s);
       }
       return exLines.join("");
