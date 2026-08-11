@@ -36,6 +36,12 @@ public class SeriousPythonPlugin: NSObject, FlutterPlugin {
             let modulePaths = args["modulePaths"] as? [String] ?? []
             let envVars = args["environmentVariables"] as? [String:String] ?? [:]
             let sync = args["sync"] as? Bool ?? false
+            let requestedStackSize = args["stackSize"] as? Int ?? 8 * 1024 * 1024
+            let pageSize = Int(getpagesize())
+            let stackSize = max(16384, ((requestedStackSize + pageSize - 1) / pageSize) * pageSize)
+            if (stackSize != requestedStackSize) {
+                NSLog("Swift runPython: stackSize \(requestedStackSize) is invalid (must be a multiple of \(pageSize) and at least 16384); using \(stackSize) instead")
+            }
             
             NSLog("Swift runPython(appPath: \(appPath), modulePaths: \(modulePaths))")
             
@@ -96,9 +102,11 @@ public class SeriousPythonPlugin: NSObject, FlutterPlugin {
             } else {
                 if (script == nil) {
                     let t = Thread(target: self, selector: #selector(runPythonFile), object: appPath)
+                    t.stackSize = stackSize
                     t.start()
                 } else {
                     let t = Thread(target: self, selector: #selector(runPythonScript), object: script!)
+                    t.stackSize = stackSize
                     t.start()
                 }
             }

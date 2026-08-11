@@ -15,8 +15,7 @@ class SeriousPythonDarwin extends SeriousPythonPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 
@@ -25,13 +24,15 @@ class SeriousPythonDarwin extends SeriousPythonPlatform {
       {String? script,
       List<String>? modulePaths,
       Map<String, String>? environmentVariables,
-      bool? sync}) async {
+      bool? sync,
+      int? stackSize}) async {
     final Map<String, dynamic> arguments = {
       'appPath': appPath,
       'script': script,
       'modulePaths': modulePaths,
       'environmentVariables': environmentVariables,
-      'sync': sync
+      'sync': sync,
+      'stackSize': stackSize
     };
     return await methodChannel.invokeMethod<String>('runPython', arguments);
   }

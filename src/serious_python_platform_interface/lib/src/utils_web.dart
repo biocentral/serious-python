@@ -19,17 +19,13 @@ class WebUtils implements PlatformUtils {
   }
 
   @override
-  Future<String> extractAssetZip(String assetPath,
-      {String? targetPath, bool checkHash = false}) {
-    return extractAssetOrFile(assetPath,
-        targetPath: targetPath, checkHash: checkHash);
+  Future<String> extractAssetZip(String assetPath, {String? targetPath, bool checkHash = false}) {
+    return extractAssetOrFile(assetPath, targetPath: targetPath, checkHash: checkHash);
   }
 
   @override
-  Future<String> extractFileZip(String filePath,
-      {String? targetPath, bool checkHash = false}) {
-    return extractAssetOrFile(filePath,
-        isAsset: false, targetPath: targetPath, checkHash: checkHash);
+  Future<String> extractFileZip(String filePath, {String? targetPath, bool checkHash = false}) {
+    return extractAssetOrFile(filePath, isAsset: false, targetPath: targetPath, checkHash: checkHash);
   }
 
   @override

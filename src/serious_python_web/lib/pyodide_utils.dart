@@ -41,7 +41,7 @@ class PyodideUtils {
   static Future<List<String>> parseRequirementsFiles(Set<String> requirementsFiles) async {
     try {
       final List<String> requirements = [];
-      for(final requirementsFile in requirementsFiles) {
+      for (final requirementsFile in requirementsFiles) {
         final content = await rootBundle.loadString(requirementsFile);
         final parsedRequirements = content
             .split('\n')

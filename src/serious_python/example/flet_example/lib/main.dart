@@ -15,9 +15,7 @@ const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
 const assetPath = "app/app.zip";
 const pythonModuleName = "main"; // {{ cookiecutter.python_module_name }}
-final hideLoadingPage =
-    bool.tryParse("{{ cookiecutter.hide_loading_animation }}".toLowerCase()) ??
-        true;
+final hideLoadingPage = bool.tryParse("{{ cookiecutter.hide_loading_animation }}".toLowerCase()) ?? true;
 const outLogFilename = "out.log";
 const errorExitCode = 100;
 
@@ -93,14 +91,11 @@ void main() async {
                 )
               : FutureBuilder(
                   future: runPythonApp(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
                     if (snapshot.hasData || snapshot.hasError) {
                       // error or premature finish
                       return MaterialApp(
-                        home: ErrorScreen(
-                            title: "Error running app",
-                            text: snapshot.data ?? snapshot.error.toString()),
+                        home: ErrorScreen(title: "Error running app", text: snapshot.data ?? snapshot.error.toString()),
                       );
                     } else {
                       // no result of error
@@ -112,10 +107,7 @@ void main() async {
                   });
         } else if (snapshot.hasError) {
           // error
-          return MaterialApp(
-              home: ErrorScreen(
-                  title: "Error starting app",
-                  text: snapshot.error.toString()));
+          return MaterialApp(home: ErrorScreen(title: "Error starting app", text: snapshot.error.toString()));
         } else {
           // loading
           return const MaterialApp(home: BlankScreen());
@@ -146,11 +138,9 @@ Future prepareApp() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     var appTempPath = (await path_provider.getApplicationCacheDirectory()).path;
-    var appDataPath =
-        (await path_provider.getApplicationDocumentsDirectory()).path;
+    var appDataPath = (await path_provider.getApplicationDocumentsDirectory()).path;
 
-    if (defaultTargetPlatform != TargetPlatform.iOS &&
-        defaultTargetPlatform != TargetPlatform.android) {
+    if (defaultTargetPlatform != TargetPlatform.iOS && defaultTargetPlatform != TargetPlatform.android) {
       // append app name to the path and create dir
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appDataPath = path.join(appDataPath, "flet", packageInfo.packageName);
@@ -162,8 +152,7 @@ Future prepareApp() async {
     environmentVariables["FLET_APP_DATA"] = appDataPath;
     environmentVariables["FLET_APP_TEMP"] = appTempPath;
 
-    environmentVariables["FLET_PLATFORM"] =
-        defaultTargetPlatform.name.toLowerCase();
+    environmentVariables["FLET_PLATFORM"] = defaultTargetPlatform.name.toLowerCase();
 
     if (defaultTargetPlatform == TargetPlatform.windows) {
       // use TCP on Windows
@@ -192,13 +181,11 @@ Future<String?> runPythonApp() async {
   if (defaultTargetPlatform == TargetPlatform.windows) {
     var tcpAddr = "127.0.0.1";
     outSocketServer = await ServerSocket.bind(tcpAddr, 0);
-    debugPrint(
-        'Python output TCP Server is listening on port ${outSocketServer.port}');
+    debugPrint('Python output TCP Server is listening on port ${outSocketServer.port}');
     socketAddr = "$tcpAddr:${outSocketServer.port}";
   } else {
     socketAddr = "stdout.sock";
-    outSocketServer = await ServerSocket.bind(
-        InternetAddress(socketAddr, type: InternetAddressType.unix), 0);
+    outSocketServer = await ServerSocket.bind(InternetAddress(socketAddr, type: InternetAddressType.unix), 0);
     debugPrint('Python output Socket Server is listening on $socketAddr');
   }
 
@@ -221,8 +208,7 @@ Future<String?> runPythonApp() async {
   }
 
   outSocketServer.listen((client) {
-    debugPrint(
-        'Connection from: ${client.remoteAddress.address}:${client.remotePort}');
+    debugPrint('Connection from: ${client.remoteAddress.address}:${client.remotePort}');
     client.listen((data) {
       var s = String.fromCharCodes(data);
       pythonOut.write(s);
@@ -282,8 +268,7 @@ class ErrorScreen extends StatelessWidget {
             ),
             Expanded(
                 child: SingleChildScrollView(
-              child: SelectableText(text,
-                  style: Theme.of(context).textTheme.bodySmall),
+              child: SelectableText(text, style: Theme.of(context).textTheme.bodySmall),
             ))
           ],
         ),

@@ -7,8 +7,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('end-to-end test', () {
-    testWidgets('make sure counter can be incremented and decremented',
-        (tester) async {
+    testWidgets('make sure counter can be incremented and decremented', (tester) async {
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 5));
 

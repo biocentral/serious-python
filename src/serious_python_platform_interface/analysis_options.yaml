@@ -5,3 +5,7 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude: [lib/src/gen.dart]
+
+# Configure line length to 120
+formatter:
+  page_width: 120

@@ -17,34 +17,51 @@ class SeriousPython {
   }
 
   /// Runs Python program from an asset.
+  ///
+  /// [assetPath] is the path to an asset which is a zip archive
+  /// with a Python program. When the app starts the archive is unpacked
+  /// to a temporary directory and Serious Python plugin will try to run
+  /// `main.py` in the root of the archive. Current directory is changed to
+  /// a temporary directory.
+  ///
+  /// If a Python app has a different entry point
+  /// it could be specified with [appFileName] parameter.
+  ///
+  /// Environment variables that must be available to a Python program could
+  /// be passed in [environmentVariables].
+  ///
+  /// By default, Serious Python expects Python dependencies installed into
+  /// `__pypackages__` directory in the root of app directory. Additional paths
+  /// to look for 3rd-party packages can be specified with [modulePaths] parameter.
+  ///
+  /// Set [sync] to `true` to sychronously run Python program; otherwise the
+  /// program starts in a new thread.
+  ///
+  /// [stackSize] sets the stack size (in bytes) of that thread on iOS/macOS;
+  /// defaults to 8 MB. Ignored on other platforms.
   static Future<String?> run(String assetPath,
       {String? appFileName,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync}) async {
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     // Handle web platform differently
     if (kIsWeb) {
       return _runWeb(assetPath,
-          appFileName: appFileName,
-          modulePaths: modulePaths,
-          environmentVariables: environmentVariables,
-          sync: sync);
+          appFileName: appFileName, modulePaths: modulePaths, environmentVariables: environmentVariables, sync: sync);
     } else {
       return _runDesktop(assetPath,
           appFileName: appFileName,
           modulePaths: modulePaths,
           environmentVariables: environmentVariables,
-          sync: sync);
+          sync: sync,
+          stackSize: stackSize);
     }
   }
 
   /// Web-specific implementation
   static Future<String?> _runWeb(String assetPath,
-      {String? appFileName,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync}) async {
-
+      {String? appFileName, List<String>? modulePaths, Map<String, String>? environmentVariables, bool? sync}) async {
     String virtualPath;
     if (path.extension(assetPath) == ".zip") {
       virtualPath = assetPath.replaceAll(".zip", "");
@@ -59,18 +76,16 @@ class SeriousPython {
       virtualPath = '$virtualPath/main.py';
     }
 
-    return runProgram(virtualPath,
-        modulePaths: modulePaths,
-        environmentVariables: environmentVariables,
-        sync: sync);
+    return runProgram(virtualPath, modulePaths: modulePaths, environmentVariables: environmentVariables, sync: sync);
   }
 
   /// Desktop-specific implementation
   static Future<String?> _runDesktop(String assetPath,
       {String? appFileName,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync}) async {
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     String appPath = "";
     if (path.extension(assetPath) == ".zip") {
       appPath = await extractAssetZip(assetPath);
@@ -91,7 +106,8 @@ class SeriousPython {
         modulePaths: modulePaths,
         environmentVariables: environmentVariables,
         script: FileSystem.isWindows ? "" : null,
-        sync: sync);
+        sync: sync,
+        stackSize: stackSize);
   }
 
   /// Runs Python program from a path.
@@ -110,16 +126,21 @@ class SeriousPython {
   ///
   /// Set [sync] to `true` to synchronously run Python program; otherwise the
   /// program starts in a new thread.
+  ///
+  /// [stackSize] sets the stack size (in bytes) of that thread on iOS/macOS;
+  /// defaults to 8 MB. Ignored on other platforms.
   static Future<String?> runProgram(String appPath,
       {String? script,
-        List<String>? modulePaths,
-        Map<String, String>? environmentVariables,
-        bool? sync}) async {
+      List<String>? modulePaths,
+      Map<String, String>? environmentVariables,
+      bool? sync,
+      int? stackSize}) async {
     return SeriousPythonPlatform.instance.run(appPath,
         script: script,
         modulePaths: modulePaths,
         environmentVariables: environmentVariables,
-        sync: sync);
+        sync: sync,
+        stackSize: stackSize);
   }
 
   static void terminate() {
