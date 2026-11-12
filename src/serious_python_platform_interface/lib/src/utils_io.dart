@@ -56,16 +56,14 @@ class IOUtils implements PlatformUtils {
     await destDir.create(recursive: true);
 
     try {
-      Archive archive;
       if (isAsset) {
         final bytes = await rootBundle.load(path);
         var data = bytes.buffer.asUint8List();
-        archive = ZipDecoder().decodeBytes(data);
+        final archive = ZipDecoder().decodeBytes(data);
+        await extractArchiveToDisk(archive, destDir.path);
       } else {
-        final inputStream = InputFileStream(path);
-        archive = ZipDecoder().decodeBuffer(inputStream);
+        await extractFileToDisk(path, destDir.path);
       }
-      await extractArchiveToDiskAsync(archive, destDir.path, asyncWrite: true);
     } catch (e) {
       debugPrint("Error unpacking archive: $e");
       await destDir.delete(recursive: true);
